@@ -4,14 +4,12 @@ local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))
 local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
 local Options = Library.Options
 local Toggles = Library.Toggles
-
 Library.Scheme.BackgroundColor = Color3.fromRGB(13,13,13)
 Library.Scheme.MainColor = Color3.fromRGB(40,40,40)
 Library.Scheme.OutlineColor = Color3.fromRGB(58,58,58)
 Library.Scheme.AccentColor = Color3.fromRGB(88,101,242)
 Library.Scheme.FontColor = Color3.fromRGB(255,255,255)
 Library.CornerRadius = 10
-
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local CollectionService = game:GetService("CollectionService")
@@ -22,497 +20,973 @@ local GameName = "+1 Speed Monkey Escape"
 pcall(function() GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name end)
 
 local UpgradesCfg = {
-    {RequisitoVictorias=0, Multiplicador=1, Cola="Básica"},
-    {Multiplicador=2, Cola="Gris", RequisitoVictorias=3},
-    {Multiplicador=4, Cola="Tigre", RequisitoVictorias=15},
-    {Multiplicador=8, Cola="Rizada", RequisitoVictorias=100},
-    {Multiplicador=16, Cola="Arcoíris", RequisitoVictorias=500},
-    {Multiplicador=32, Cola="Dorada", RequisitoVictorias=2500},
-    {Multiplicador=64, Cola="Magma", RequisitoVictorias=15000},
-    {Multiplicador=128, Cola="Congelada", RequisitoVictorias=50000},
-    {Multiplicador=256, Cola="Diablo", RequisitoVictorias=250000},
-    {Multiplicador=512, Cola="Noche", RequisitoVictorias=1000000},
-    {Multiplicador=1000, Cola="Inferno", RequisitoVictorias=1000000},
-    {Multiplicador=2000, Cola="Verdosa", RequisitoVictorias=5000000},
-    {Multiplicador=4000, Cola="Abismo", RequisitoVictorias=25000000},
-    {Multiplicador=8000, Cola="Arcana", RequisitoVictorias=100000000},
-    {Multiplicador=16000, Cola="Divina", RequisitoVictorias=500000000},
-    {Multiplicador=32000, Cola="Carmesí", RequisitoVictorias=3000000000},
+    {WinsRequirement=0, Multi=1, Skin="Basico"},
+    {Multi=2, Skin="Gris", WinsRequirement=3},
+    {Multi=4, Skin="Tigre", WinsRequirement=15},
+    {Multi=8, Skin="Rizado", WinsRequirement=100},
+    {Multi=16, Skin="Arcoiris", WinsRequirement=500},
+    {Multi=32, Skin="Dorado", WinsRequirement=2500},
+    {Multi=64, Skin="Magma", WinsRequirement=15000},
+    {Multi=128, Skin="Helado", WinsRequirement=50000},
+    {Multi=256, Skin="Diablo", WinsRequirement=250000},
+    {Multi=512, Skin="Noche", WinsRequirement=1000000},
+    {Multi=1000, Skin="Infierno", WinsRequirement=1000000},
+    {Multi=2000, Skin="Verde", WinsRequirement=5000000},
+    {Multi=4000, Skin="Abismo", WinsRequirement=25000000},
+    {Multi=8000, Skin="Arcano", WinsRequirement=100000000},
+    {Multi=16000, Skin="Divino", WinsRequirement=500000000},
+    {Multi=32000, Skin="Carmesi", WinsRequirement=3000000000},
 }
-
-local MainCfg = {
-    RenacimientosMundos={Mundo2=8, Mundo3=16, Mundo4=24, Mundo5=32},
-    NivelesRenacimiento={15,25,40,60,80,100,125,150,165,175,190,210,230,250,275,300,315,325,340,360,380,400,425,450,465,475,490,510,530,550,575,600,615,625,640,660,680},
-    NivelMaximo=690,
-    VictoriasEtapa={
-        Mundo1={1,5,20,100,500,3000,15000,50000,200000},
-        Mundo2={1000000,5000000,25000000,100000000,600000000,3000000000,25000000000,150000000000,1000000000000},
-        Mundo3={5000000000000,20000000000000,75000000000000,250000000000000,1000000000000000,5000000000000000,25000000000000000,100000000000000000,400000000000000000},
-        Mundo4={2000000000000000000,10000000000000000000,75000000000000000000,350000000000000000000,2000000000000000000000,10000000000000000000000,50000000000000000000000,250000000000000000000000,1000000000000000000000000},
-        Mundo5={5000000000000000000000000,25000000000000000000000000,75000000000000000000000000,250000000000000000000000000,1000000000000000000000000000,5000000000000000000000000000,20000000000000000000000000000,80000000000000000000000000000,35000000000000000000000000000}
-    }
-}
-
-local CintaCfg = {Multiplicadores={Recompensa=1.5, Dorada=3, Diamante=9, Galaxia=25, Esmeralda=100, Vacío=100, Celestial=1000, Hundida=2, Cuántica=10, Básica=1}}
-local Formateador = {Formatear=function(v) return tostring(v) end}
-local NumerosGrandes = {
-    MayorIgual=function(a,b)
+local MainCfg = {WorldRebirthsRequired={World2=8,World3=16,World4=24,World5=32}, RebirthLevels={15,25,40,60,80,100,125,150,165,175,190,210,230,250,275,300,315,325,340,360,380,400,425,450,465,475,490,510,530,550,575,600,615,625,640,660,680}, MaxLevel=690, StageWins={World1={1,5,20,100,500,3000,15000,50000,200000}, World2={1000000,5000000,25000000,100000000,600000000,3000000000,25000000000,150000000000,1000000000000}, World3={5000000000000,20000000000000,75000000000000,250000000000000,1000000000000000,5000000000000000,25000000000000000,100000000000000000,400000000000000000}, World4={2000000000000000000,10000000000000000000,75000000000000000000,350000000000000000000,2000000000000000000000,10000000000000000000000,50000000000000000000000,250000000000000000000000,1000000000000000000000000}, World5={5000000000000000000000000,25000000000000000000000000,75000000000000000000000000,250000000000000000000000000,1000000000000000000000000000,5000000000000000000000000000,20000000000000000000000000000,80000000000000000000000000000,350000000000000000000000000000}}}
+local TreadmillCfg = {Multis={Reward=1.5, Golden=3, Diamond=9, Galaxy=25, Emerald=100, Void=100, Celestial=1000, Sunken=2, Quantum=10, Basic=1}}
+local Formatter = {Format=function(v) return tostring(v) end}
+local BigNum = {
+    GreaterEqual=function(a,b)
         local av = 0
-        if a and a:FindFirstChild("Dígitos") then av = tonumber(a.Dígitos.Value) or 0 elseif a and a:FindFirstChild("Valor") then av = tonumber(a.Valor) or 0 elseif a and a.Valor then av = tonumber(a.Valor) or 0 end
+        if a and a:FindFirstChild("Digits") then av = tonumber(a.Digits.Value) or 0 elseif a and a:FindFirstChild("Value") then av = tonumber(a.Value) or 0 elseif a and a.Value then av = tonumber(a.Value) or 0 end
         local bv = tonumber(b) or 0
         return av >= bv
     end,
-    AlCambiar=function(a,cb)
+    OnChanged=function(a,cb)
         if a and a.Changed then a.Changed:Connect(function() cb() end) end
-        if a and a:FindFirstChild("Dígitos") and a.Dígitos.Changed then a.Dígitos.Changed:Connect(function() cb() end) end
+        if a and a:FindFirstChild("Digits") and a.Digits.Changed then a.Digits.Changed:Connect(function() cb() end) end
     end
 }
 
-local Ventana = Library:CreateWindow({
-    Título = "Chituk Hub",
-    Pie = {"Script para: ", {Texto=GameName, NoCopiable=false}},
-    PieCopiable=false, Centrado=true, MostrarAuto=true, Redimensionable=true,
-    MostrarCursorPersonalizado=true, LadoNotificacion="Derecho",
-    TamañoBuscador=UDim2.fromScale(0.35,1), BúsquedaDifusa=true, BuscarValores=true,
-    Minimizable=true, RadioEsquinas=10, TeclaAlternar=Enum.KeyCode.RightShift,
+local Window = Library:CreateWindow({
+    Title = "Chituk Hub",
+    Footer = {"Chituk Hub cargado |", {Text=GameName, Copyable=false}},
+    CopyableFooter=false, Center=true, AutoShow=true, Resizable=true, ShowCustomCursor=true, NotifySide="Right",
+    SearchbarSize=UDim2.fromScale(0.35,1), FuzzySearch=true, SearchValues=true, Minimizable=true, CornerRadius=10, ToggleKeybind=Enum.KeyCode.RightShift,
 })
-
-local Pestañas = {
-    Principal = Ventana:AddTab({Nombre="Principal", Icono="casa", Descripción="Panel principal"}),
-    Granja = Ventana:AddTab({Nombre="Granja", Icono="tractor", Descripción="Entrenamiento, victorias y recolección"}),
-    Inventario = Ventana:AddTab({Nombre="Inventario", Icono="mochila", Descripción="Colas, estelas, auras y amuletos"}),
-    Renacimiento = Ventana:AddTab({Nombre="Renacimiento", Icono="actualizar", Descripción="Renacimientos automáticos"}),
-    Ajustes = Ventana:AddTab({Nombre="Ajustes", Icono="engranaje", Descripción="Configuración del sistema"}),
-    Creditos = Ventana:AddTab({Nombre="Créditos", Icono="usuarios", Descripción="Autores y colaboradores"}),
+local Tabs = {
+    Principal = Window:AddTab({Name="Principal", Icon="house", Description="Panel Principal"}),
+    Cultivo = Window:AddTab({Name="Cultivo", Icon="tractor", Description="Entrenar y Ganar"}),
+    Inventario = Window:AddTab({Name="Inventario", Icon="backpack", Description="Colas, Senderos, Auras, Amuletos"}),
+    Renacimiento = Window:AddTab({Name="Renacimiento", Icon="refresh-cw", Description="Renacimiento"}),
+    Ajustes = Window:AddTab({Name="Ajustes", Icon="settings", Description="Configuracion"}),
+    Creditos = Window:AddTab({Name="Creditos", Icon="user", Description="Creditos del Script"}),
 }
+Tabs.Cultivo:SetSubTabAlignment("Center")
+local CultivoEntrenar = Tabs.Cultivo:AddSubTab("Entrenar")
+local CultivoGanar = Tabs.Cultivo:AddSubTab("Ganar")
+local CultivoRecolectar = Tabs.Cultivo:AddSubTab("Recolectar")
+local CultivoCarrera = Tabs.Cultivo:AddSubTab("Carrera")
+local CultivoRecompensas = Tabs.Cultivo:AddSubTab("Recompensas")
+Tabs.Inventario:SetSubTabAlignment("Center")
+local InvColas = Tabs.Inventario:AddSubTab("Colas")
+local InvSenderos = Tabs.Inventario:AddSubTab("Senderos")
+local InvAuras = Tabs.Inventario:AddSubTab("Auras")
+local InvAmuletosTienda = Tabs.Inventario:AddSubTab("Amuletos - Tienda")
+local InvAmuletosGestionar = Tabs.Inventario:AddSubTab("Amuletos - Gestionar")
+local InvConsumibles = Tabs.Inventario:AddSubTab("Consumibles")
+Tabs.Renacimiento:SetSubTabAlignment("Center")
+local RenAuto = Tabs.Renacimiento:AddSubTab("Automatico")
+local RenInfo = Tabs.Renacimiento:AddSubTab("Informacion")
 
-Pestañas.Granja:EstablecerAlineaciónSubpestañas("Centro")
-local Entrenar = Pestañas.Granja:AgregarSubpestaña("Entrenamiento")
-local Victorias = Pestañas.Granja:AgregarSubpestaña("Victorias")
-local Recolectar = Pestañas.Granja:AgregarSubpestaña("Recolección")
-local Carrera = Pestañas.Granja:AgregarSubpestaña("Carreras")
-local Recompensas = Pestañas.Granja:AgregarSubpestaña("Recompensas")
-
-Pestañas.Inventario:EstablecerAlineaciónSubpestañas("Centro")
-local ColasP = Pestañas.Inventario:AgregarSubpestaña("Colas")
-local Estelas = Pestañas.Inventario:AgregarSubpestaña("Estelas")
-local Auras = Pestañas.Inventario:AgregarSubpestaña("Auras")
-local TiendaAmuleto = Pestañas.Inventario:AgregarSubpestaña("Amuletos - Tienda")
-local GestionAmuleto = Pestañas.Inventario:AgregarSubpestaña("Amuletos - Gestión")
-local Consumibles = Pestañas.Inventario:AgregarSubpestaña("Consumibles")
-
-Pestañas.Renacimiento:EstablecerAlineaciónSubpestañas("Centro")
-local AutoRenac = Pestañas.Renacimiento:AgregarSubpestaña("Automático")
-local InfoRenac = Pestañas.Renacimiento:AgregarSubpestaña("Información")
-
-do
-    local GrupoIzq = Pestañas.Creditos:AgregarGrupoIzquierda("Agradecimientos y Autores")
-    GrupoIzq:AgregarEtiqueta("✅ Chituk (Chituk_09 youtube)", true)
-    GrupoIzq:AgregarEtiqueta("✅ Pichigdasos - Desarrollador de este script y El De MM2", true)
-    GrupoIzq:AgregarDivisor()
-    GrupoIzq:AgregarEtiqueta("Versión limpia y adaptada completamente funcional", true)
-end
-
-local function dispararSeguro(remoto,...)
-    if not remoto then return false end
-    local ok, err
-    local clase = remoto.ClassName
-    if clase=="RemoteEvent" then ok,err = pcall(function(...) remoto:FireServer(...) end, ...)
-    elseif clase=="RemoteFunction" then ok,err = pcall(function(...) return remoto:InvokeServer(...) end, ...)
-    else ok,err = pcall(function(...) remoto:FireServer(...) end, ...) end
-    if not ok then warn("[Fallo al enviar] "..tostring(remoto.Name)..": "..tostring(err)) end
+local function safeFire(remote,...)
+    if not remote then return false end
+    local ok,err
+    local cn = remote.ClassName
+    if cn=="RemoteEvent" then ok,err = pcall(function(...) remote:FireServer(...) end, ...)
+    elseif cn=="RemoteFunction" then ok,err = pcall(function(...) return remote:InvokeServer(...) end, ...)
+    else ok,err = pcall(function(...) remote:FireServer(...) end, ...) end
+    if not ok then warn("[ErrorFuego] "..remote.Name..": "..tostring(err)) end
     return ok
 end
 
-local function crearControlIntervalo(grupo,id,texto,defecto)
-    return grupo:AgregarDeslizador(id, {Texto=texto, Defecto=defecto or 0.5, Mínimo=0.01, Máximo=10, Redondeo=2, Sufijo="s"})
+local function createIntervalSlider(group,id,text,def)
+    return group:AddSlider(id, {Text=text, Default=def or 0.5, Min=0.01, Max=10, Rounding=2, Suffix="s"})
 end
 
-local Bucles={}
-local function iniciarBucle(id,conmutador,intervalo,funcion)
-    if Bucles[id] then task.cancel(Bucles[id]); Bucles[id]=nil end
-    Bucles[id]=task.spawn(function()
-        while Toggles[conmutador] and Toggles[conmutador].Valor do
-            local ok,err=pcall(funcion)
-            if not ok then warn("["..id.."] Error →",err) end
-            local espera = 0.5
-            if Options[intervalo] then espera=Options[intervalo].Valor end
-            task.wait(espera)
+local Loops={}
+local function runLoop(id,toggleId,intervalId,fn)
+    if Loops[id] then task.cancel(Loops[id]); Loops[id]=nil end
+    Loops[id]=task.spawn(function()
+        while Toggles[toggleId] and Toggles[toggleId].Value do
+            local ok,err=pcall(fn)
+            if not ok then warn("["..id.."]",err) end
+            local iv=0.5
+            if Options[intervalId] then iv=Options[intervalId].Value end
+            task.wait(iv)
         end
-        Bucles[id]=nil
+        Loops[id]=nil
     end)
 end
+local function stopLoop(id) if Loops[id] then task.cancel(Loops[id]); Loops[id]=nil end end
 
-local function detenerBucle(id) if Bucles[id] then task.cancel(Bucles[id]); Bucles[id]=nil end end
-
-local UsuarioVirtual=game:GetService("VirtualUser")
-local ConexionAntiAFK
-local function activarAntiAFK(estado)
-    if estado then
-        if ConexionAntiAFK then ConexionAntiAFK:Disconnect() end
-        ConexionAntiAFK=LocalPlayer.Idled:Connect(function()
-            UsuarioVirtual:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+local VirtualUser=game:GetService("VirtualUser")
+local AntiAFKConn
+local function setAntiAFK(s)
+    if s then
+        if AntiAFKConn then AntiAFKConn:Disconnect() end
+        AntiAFKConn=LocalPlayer.Idled:Connect(function()
+            VirtualUser:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
             task.wait(1)
-            UsuarioVirtual:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+            VirtualUser:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
         end)
     else
-        if ConexionAntiAFK then ConexionAntiAFK:Disconnect(); ConexionAntiAFK=nil end
+        if AntiAFKConn then AntiAFKConn:Disconnect(); AntiAFKConn=nil end
     end
 end
 
 do
-    local Izq = Pestañas.Principal:AgregarGrupoIzquierda("Información")
-    Izq:AgregarEtiqueta("Juego: "..GameName, true)
-    Izq:AgregarEtiqueta("ID del lugar: "..tostring(game.PlaceId), true)
-    Izq:AgregarDivisor()
-    local inicio=tick()
-    Izq:AgregarEtiqueta("Tiempo de sesión: 00:00:00", true, "TiempoSesion")
+    local L=Tabs.Principal:AddLeftGroupbox("Informacion")
+    L:AddLabel("Juego: "..GameName, true)
+    L:AddLabel("PlaceId: "..tostring(game.PlaceId), true)
+    L:AddDivider()
+    local start=tick()
+    L:AddLabel("Sesion: 00:00:00", true, "TiempoSesion")
     task.spawn(function()
         while true do task.wait(1)
-            local transcurrido=math.floor(tick()-inicio)
-            local h=math.floor(transcurrido/3600); local m=math.floor((transcurrido%3600)/60); local s=transcurrido%60
-            if Options.TiempoSesion then Options.TiempoSesion:EstablecerTexto(string.format("Tiempo de sesión: %02d:%02d:%02d",h,m,s)) end
+            local e=math.floor(tick()-start)
+            local h=math.floor(e/3600); local m=math.floor((e%3600)/60); local s=e%60
+            if Options.TiempoSesion then Options.TiempoSesion:SetText(string.format("Sesion: %02d:%02d:%02d",h,m,s)) end
         end
     end)
-    Izq:AgregarEtiqueta("Sistema: Cinta → Victorias → Renacer → Equipar mejor", true)
-    Izq:AgregarBotón({Texto="Copiar nombre del juego", Función=function() if setclipboard then setclipboard(GameName) end end})
-
-    local Der = Pestañas.Principal:AgregarGrupoDerecha("Estado rápido")
-    local function actualizarEstado() return string.format("Nivel %d | Renacimientos %d | Victorias %s", Data.Nivel.Value, Data.Rebirths.Value, Data.Wins:FindFirstChild("Digits") and Data.Wins.Digits.Value or "?") end
-    Der:AgregarEtiqueta(actualizarEstado(), true)
-    Data.Nivel.Changed:Connect(function() end)
+    L:AddLabel("Entrenar -> Ganar (amarillo) -> Renacimiento -> Colas", true)
+    L:AddButton({Text="Copiar Nombre del Juego", Func=function() if setclipboard then setclipboard(GameName) end end})
+    local R=Tabs.Principal:AddRightGroupbox("Estado Rapido")
+    local function upd() return string.format("Nivel %d | Renacimientos %d | Victorias %s", Data.Level.Value, Data.Rebirths.Value, Data.Wins:FindFirstChild("Digits") and Data.Wins.Digits.Value or "?") end
+    R:AddLabel(upd(), true)
+    Data.Level.Changed:Connect(function() end)
 end
 
 do
-    local Gp = Entrenar:AgregarGrupoIzquierda("Cintas de correr")
-    local tiposCinta={"Básica","Dorada","Diamante","Galaxia","Vacío","Celestial","Hundida","Cuántica","Recompensa","Esmeralda"}
+    local G=CultivoEntrenar:AddLeftGroupbox("Entrenar en Cinta")
+    local TiposCinta={"Basic","Golden","Diamond","Galaxy","Void","Celestial","Sunken","Quantum","Reward","Emerald"}
     pcall(function()
-        tiposCinta={}
-        for k,_ in pairs(CintaCfg.Multiplicadores) do table.insert(tiposCinta,k) end
-        table.sort(tiposCinta)
+        TiposCinta={}
+        for k,_ in pairs(TreadmillCfg.Multis) do table.insert(TiposCinta,k) end
+        table.sort(TiposCinta)
     end)
+    G:AddDropdown("SeleccionCinta", {Values=TiposCinta, Default=1, Multi=false, Text="Cinta Manual (si no es Mejor)", Searchable=true})
+    G:AddToggle("AutoEntrenar", {Text="Auto Entrenar en Cinta", Default=false})
+    G:AddSlider("AutoEntrenar_Intervalo", {Text="Intervalo", Default=5, Min=5, Max=10, Rounding=1, Suffix="s"})
+    G:AddToggle("AutoEntrenar_Mejor", {Text="Usar Mejor DESBLOQUEADO (sin Robux)", Default=true, Tooltip="Omite cintas de GamePass que no tienes (Dorado, Diamante etc)"})
+    G:AddLabel("Revisa CollectionService etiquetado 'Cinta' + 'EtiquetaCinta' + Datos.Pases. Gratis = Basico, Hundido, Quantum etc", true)
 
-    Gp:AgregarListaDesplegable("SeleccionarCinta", {Valores=tiposCinta, Defecto=1, SelecciónÚnica=true, Texto="Elegir cinta manual", Buscable=true})
-    Gp:AgregarConmutador("EntrenarAuto", {Texto="Entrenar automáticamente", Defecto=false})
-    crearControlIntervalo(Gp, "IntervaloEntrenar", "Intervalo de entrenamiento", 5)
-    Gp:AgregarConmutador("UsarMejor", {Texto="Usar MEJOR DESBLOQUEADA (sin Robux)", Defecto=true, Descripción="Evita contenido de pago que no tengas"})
-    Gp:AgregarEtiqueta("Detecta objetos marcados 'Cinta' + verifica tus pases/desbloqueos", true)
-
-    local function estaDesbloqueada(tipo)
-        if tipo=="Hundida" then local shards=Data:FindFirstChild("FragmentosRecolectados") if not shards or #shards:GetChildren()<9 then return false end end
-        if tipo=="Cuántica" then return false end
-        local dePago={Dorada=true, Diamante=true, Galaxia=true, Vacío=true, Celestial=true}
-        if not dePago[tipo] then return true end
-        return Data.Pases:FindFirstChild(tipo)~=nil
+    local function isCintaDesbloqueada(tipo)
+        if tipo=="Sunken" then local s=Data:FindFirstChild("CollectedShards") if not s or #s:GetChildren()<9 then return false end end
+        if tipo=="Quantum" then return false end
+        local listaPagos={Golden=true, Diamond=true, Galaxy=true, Void=true, Celestial=true}
+        if not listaPagos[tipo] then return true end
+        return Data.Passes:FindFirstChild(tipo) ~= nil
     end
 
-    local function obtenerCinta(preferida)
-        local mejorParte=nil; local mejorMult=-1
-        for _,parte in ipairs(CollectionService:GetTagged("Cinta")) do
+    local function getParteCinta(preferido)
+        local mejor=nil; local mejorMulti=-1
+        for _,parte in CollectionService:GetTagged("Treadmill") do
             if parte:IsA("BasePart") and parte:IsDescendantOf(workspace) then
-                local tipo=parte:GetAttribute("Tipo") or parte.Name
-                if not estaDesbloqueada(tipo) then continue end
-                local mult=CintaCfg.Multiplicadores[tipo] or 0
-                if preferida and tipo:lower()==preferida:lower() then return parte end
-                if mult>mejorMult then mejorMult=mult; mejorParte=parte end
+                local tipo = parte:GetAttribute("Type") or parte.Name
+                if not isCintaDesbloqueada(tipo) then continue end
+                local multi = TreadmillCfg.Multis[tipo] or 0
+                if preferido and tipo:lower()==preferido:lower() then return parte end
+                if not preferido then
+                    if multi > mejorMulti then mejorMulti=multi; mejor=parte end
+                end
             end
         end
-        if mejorParte then return mejorParte end
-        for _,parte in ipairs(CollectionService:GetTagged("Cinta")) do
+        if mejor then return mejor end
+        for _,parte in CollectionService:GetTagged("Treadmill") do
             if parte:IsA("BasePart") and parte:IsDescendantOf(workspace) then
-                local tipo=parte:GetAttribute("Tipo") or parte.Name
-                if estaDesbloqueada(tipo) then return parte end
+                local tipo = parte:GetAttribute("Type") or parte.Name
+                if isCintaDesbloqueada(tipo) then return parte end
             end
         end
         return nil
     end
 
-    local function comenzarEntrenamiento()
-        iniciarBucle("EntrenarAuto","EntrenarAuto","IntervaloEntrenar",function()
-            local usarMejor=Toggles.UsarMejor and Toggles.UsarMejor.Valor
-            local eleccion=Options.SeleccionarCinta and Options.SeleccionarCinta.Valor or "Básica"
-            local cinta=obtenerCinta(if usarMejor then nil else eleccion)
-            if not cinta then return end
-            local raiz=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if not raiz then return end
-            pcall(function() firetouchinterest(raiz, cinta, 0) end)
-            raiz.CFrame = cinta.CFrame + Vector3.new(0,5,0)
+    local function empezarEntrenar()
+        runLoop("AutoEntrenar","AutoEntrenar","AutoEntrenar_Intervalo",function()
+            local usarMejor = Toggles.AutoEntrenar_Mejor and Toggles.AutoEntrenar_Mejor.Value
+            local sel = Options.SeleccionCinta and Options.SeleccionCinta.Value or "Basico"
+            local parte = getParteCinta(if usarMejor then nil else sel)
+            if not parte then return end
+            local hrp=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if not hrp then return end
+            pcall(function() firetouchinterest(hrp, parte, 0) end)
+            hrp.CFrame = parte.CFrame + Vector3.new(0,5,0)
             task.wait(0.15)
-            pcall(function() firetouchinterest(raiz, cinta, 1) end)
+            pcall(function() firetouchinterest(hrp, parte, 1) end)
         end)
     end
 
-    Toggles.EntrenarAuto:OnChanged(function() if Toggles.EntrenarAuto.Valor then comenzarEntrenamiento() else detenerBucle("EntrenarAuto") end end)
-    if Toggles.UsarMejor then Toggles.UsarMejor:OnChanged(function() if Toggles.EntrenarAuto.Valor then detenerBucle("EntrenarAuto"); task.wait(0.2); comenzarEntrenamiento() end end) end
+    Toggles.AutoEntrenar:OnChanged(function() if Toggles.AutoEntrenar.Value then empezarEntrenar() else stopLoop("AutoEntrenar") end end)
+    if Toggles.AutoEntrenar_Mejor then Toggles.AutoEntrenar_Mejor:OnChanged(function() if Toggles.AutoEntrenar.Value then stopLoop("AutoEntrenar"); task.wait(0.2); empezarEntrenar() end end) end
 
-    local DerG=Entrenar:AgregarGrupoDerecha("Datos")
-    DerG:AgregarEtiqueta("Multiplicador velocidad: "..tostring(Data.MultiplicadorVelocidad.Valor), true)
-    DerG:AgregarEtiqueta("Tu nivel: "..tostring(Data.Nivel.Valor), true)
-    DerG:AgregarBotón({Texto="Ir teletransportado a mejor cinta", Función=function()
-        local cinta=obtenerCinta(nil)
-        if cinta and LocalPlayer.Character then LocalPlayer.Character.HumanoidRootPart.CFrame = cinta.CFrame + Vector3.new(0,5,0) end
+    local G2=CultivoEntrenar:AddRightGroupbox("Info Entrenamiento")
+    G2:AddLabel("MultiVelocidad: "..tostring(Data.SpeedMulti.Value), true)
+    G2:AddLabel("Nivel: "..tostring(Data.Level.Value), true)
+    G2:AddButton({Text="TP a Mejor Cinta Desbloqueada", Func=function()
+        local p=getParteCinta(nil)
+        if p and LocalPlayer.Character then LocalPlayer.Character.HumanoidRootPart.CFrame = p.CFrame + Vector3.new(0,5,0) end
     end})
-    DerG:AgregarBotón({Texto="Listar cintas y bloqueos", Función=function()
-        local texto=""
-        for _,obj in CollectionService:GetTagged("Cinta") do
-            local t=obj:GetAttribute("Tipo") or obj.Name
-            texto=texto..t.." | x"..tostring(CintaCfg.Multiplicadores[t]).." | "..(estaDesbloqueada(t) and "✅ Libre" or "❌ Bloqueado").."\n"
+    G2:AddButton({Text="Listar Cintas + Desbloqueo", Func=function()
+        local s=""
+        for _,p in CollectionService:GetTagged("Treadmill") do
+            local t=p:GetAttribute("Type") or p.Name
+            local multi=TreadmillCfg.Multis[t] or 0
+            local desbloqueado=isCintaDesbloqueada(t)
+            s=s..t.." multi "..multi.." desbloqueado "..tostring(desbloqueado).."\n"
         end
-        print(texto) Library:Notificar({Título="Lista de cintas", Descripción=texto:sub(1,350), Tiempo=6})
+        print(s); Library:Notify({Title="Cintas", Description=s:sub(1,300), Time=5})
     end})
 end
 
 do
-    local GrupoV=Victorias:AgregarGrupoIzquierda("Granja automática")
-    GrupoV:AgregarConmutador("GranjarVictorias", {Texto="Recolectar victorias automático", Defecto=false})
-    crearControlIntervalo(GrupoV,"IntervaloVictorias","Tiempo entre pasos",0.6)
+    local G=CultivoGanar:AddLeftGroupbox("Cultivo de Victorias")
+    G:AddToggle("AutoGanar", {Text="Auto Ganar Victorias (Solo Amarillo)", Default=false})
+    createIntervalSlider(G, "AutoGanar_Intervalo", "Intervalo", 0.6)
 
-    local opcionesVictorias={}
-    for mundo,etapas in pairs(MainCfg.VictoriasEtapa) do
-        for i,cant in ipairs(etapas) do
-            table.insert(opcionesVictorias, string.format("%s Etapa %d (%s pts)", mundo, i, Formateador.Formatear(cant)))
+    local opcionesGanar={}
+    for mundo, etapas in pairs(MainCfg.StageWins) do
+        for i, victorias in ipairs(etapas) do
+            table.insert(opcionesGanar, string.format("%s Etapa%d (%s victorias)", mundo, i, Formatter.Format(victorias)))
         end
     end
-    table.sort(opcionesVictorias)
+    table.sort(opcionesGanar)
 
-    local posicionesFijas={
-        Mundo1={[1]=Vector3.new(-682.16,23.04,-255.05),[2]=Vector3.new(-935.66,23.04,-255.05),[3]=Vector3.new(-1214.16,23.04,-255.05),[4]=Vector3.new(-1569.16,23.04,-255.05),[5]=Vector3.new(-2183.16,118.04,-255.05),[6]=Vector3.new(-3046.41,118.04,-255.05),[7]=Vector3.new(-4318.16,277.04,-255.05),[8]=Vector3.new(-6158.66,277.04,-254.66),[9]=Vector3.new(-9459,399,-255)},
-        Mundo2={[1]=Vector3.new(-735.16,23.04,-2565.05),[2]=Vector3.new(-1095.01,38.04,-2565.05),[3]=Vector3.new(-1880.16,-51.96,-2565.05),[4]=Vector3.new(-2400.16,55.34,-2565.05),[5]=Vector3.new(-3247.16,55.34,-2565.05),[6]=Vector3.new(-3605.38,55.34,-3697.49),[7]=Vector3.new(-3605.38,55.34,-4607.49),[8]=Vector3.new(-3605.38,55.34,-5827.49),[9]=Vector3.new(-3603,164,-9379)},
-        Mundo3={[1]=Vector3.new(-684.16,22.54,2740.95),[2]=Vector3.new(-953.63,22.54,2740.95),[3]=Vector3.new(-1286.63,22.54,2740.95),[4]=Vector3.new(-1684.63,22.54,2740.95),[5]=Vector3.new(-2240.63,22.54,2740.95),[6]=Vector3.new(-2560.63,278.54,2740.95),[7]=Vector3.new(-4208.63,278.54,2740.95),[8]=Vector3.new(-5420.63,278.54,2740.95),[9]=Vector3.new(-8077.63,278.54,2740.95)},
-        Mundo4={[1]=Vector3.new(-684.16,22.54,5740.95),[2]=Vector3.new(-892.16,22.54,5740.95),[3]=Vector3.new(-1206.66,22.54,5740.95),[4]=Vector3.new(-1592.66,22.54,5740.95),[5]=Vector3.new(-1852.06,172.54,5740.95),[6]=Vector3.new(-2718.06,172.54,5740.95),[7]=Vector3.new(-3933.06,172.54,5740.95),[8]=Vector3.new(-5663.06,17.50,5740.95),[9]=Vector3.new(-7760.11,17.50,5740.95)},
-        Mundo5={[1]=Vector3.new(-684.16,22.54,7561.95),[2]=Vector3.new(-1005.16,22.54,7561.95),[3]=Vector3.new(-1333.16,22.54,7561.95),[4]=Vector3.new(-1778.15,103.54,7444.95),[5]=Vector3.new(-2369.24,103.54,7444.95),[6]=Vector3.new(-2828.45,283.54,7801.31)}
-    }
+    local PosGanarFija={World1={[1]=Vector3.new(-682.16,23.04,-255.05),[2]=Vector3.new(-935.66,23.04,-255.05),[3]=Vector3.new(-1214.16,23.04,-255.05),[4]=Vector3.new(-1569.16,23.04,-255.05),[5]=Vector3.new(-2183.16,118.04,-255.05),[6]=Vector3.new(-3046.41,118.04,-255.05),[7]=Vector3.new(-4318.16,277.04,-255.05),[8]=Vector3.new(-6158.66,277.04,-254.66),[9]=Vector3.new(-9459,399,-255)}, World2={[1]=Vector3.new(-735.16,23.04,-2565.05),[2]=Vector3.new(-1095.01,38.04,-2565.05),[3]=Vector3.new(-1880.16,-51.96,-2565.05),[4]=Vector3.new(-2400.16,55.34,-2565.05),[5]=Vector3.new(-3247.16,55.34,-2565.05),[6]=Vector3.new(-3605.38,55.34,-3697.49),[7]=Vector3.new(-3605.38,55.34,-4607.49),[8]=Vector3.new(-3605.38,55.34,-5827.49),[9]=Vector3.new(-3603,164,-9379)}, World3={[1]=Vector3.new(-684.16,22.54,2740.95),[2]=Vector3.new(-953.63,22.54,2740.95),[3]=Vector3.new(-1286.63,22.54,2740.95),[4]=Vector3.new(-1684.63,22.54,2740.95),[5]=Vector3.new(-2240.63,22.54,2740.95),[6]=Vector3.new(-2560.63,278.54,2740.95),[7]=Vector3.new(-4208.63,278.54,2740.95),[8]=Vector3.new(-5420.63,278.54,2740.95),[9]=Vector3.new(-8077.63,278.54,2740.95)}, World4={[1]=Vector3.new(-684.16,22.54,5740.95),[2]=Vector3.new(-892.16,22.54,5740.95),[3]=Vector3.new(-1206.66,22.54,5740.95),[4]=Vector3.new(-1592.66,22.54,5740.95),[5]=Vector3.new(-1852.06,172.54,5740.95),[6]=Vector3.new(-2718.06,172.54,5740.95),[7]=Vector3.new(-3933.06,172.54,5740.95),[8]=Vector3.new(-5663.06,17.50,5740.95),[9]=Vector3.new(-7760.11,17.50,5740.95)}, World5={[1]=Vector3.new(-684.16,22.54,7561.95),[2]=Vector3.new(-1005.16,22.54,7561.95),[3]=Vector3.new(-1333.16,22.54,7561.95),[4]=Vector3.new(-1778.15,103.54,7444.95),[5]=Vector3.new(-2369.24,103.54,7444.95),[6]=Vector3.new(-2828.45,283.54,7801.31)}}
 
-    GrupoV:AgregarListaDesplegable("DestinoVictorias", {Valores=opcionesVictorias, Defecto=1, SelecciónÚnica=true, Texto="Punto objetivo", Buscable=true, Expandir=true, ColumnasExpandidas=2})
-    GrupoV:AgregarListaDesplegable("FiltroMundo", {Valores={"Mundo1","Mundo2","Mundo3","Mundo4","Mundo5","Todos"}, Defecto=6, SelecciónÚnica=true, Texto="Filtrar por mundo"})
-    GrupoV:AgregarEtiqueta("⚠️ Solo recoge botones amarillos (normales), evita VIP/rojos", true)
+    G:AddDropdown("AutoGanar_Manual", {Values=opcionesGanar, Default=1, Multi=false, Text="Almohadilla Manual", Searchable=true, Expandable=true, ExpandColumns=2})
+    G:AddDropdown("AutoGanar_FiltroMundo", {Values={"Mundo1","Mundo2","Mundo3","Mundo4","Mundo5","Todos"}, Default=6, Multi=false, Text="Filtro de Mundo"})
+    G:AddLabel("Amarillo = Boton GanarNormal. Rojo VipGanar omitido.", true)
 
-    local function descomponerEleccion(texto)
-        local mun,et=texto:match("(%w+) Etapa (%d+)")
-        return mun, tonumber(et)
+    local function parsearOpcionGanar(opt)
+        local mundo, etapa = opt:match("(%w+) Etapa(%d+)")
+        return mundo, tonumber(etapa)
     end
 
-    local function mundoDesbloqueado(mundo)
-        local num=tonumber(mundo:match("%d+") or 0)
+    local function isMundoDesbloqueado(mundo)
+        local num = tonumber(mundo:match("Mundo(%d+)") or 0)
         if num==1 then return true end
-        local req=(MainCfg.RenacimientosMundos or {})[mundo]
+        local req = (MainCfg.WorldRebirthsRequired :: any)[mundo] or (MainCfg.WorldRebirthsRequired :: any)["World"..num]
         if not req then return true end
         return Data.Rebirths.Value >= req
     end
 
-    local function obtenerObjetivoManual()
-        local elec=Options.DestinoVictorias and Options.DestinoVictorias.Valor or opcionesVictorias[1]
-        local mun,et=descomponerEleccion(elec)
-        if not mun then return nil end
-        if posicionesFijas[mun] and posicionesFijas[mun][et] then
-            local pos=posicionesFijas[mun][et]
-            return {pos=pos,mundo=mun,etapa=et}
+    local function obtenerTodasGanarNormales(filtrarMundo)
+        local lista={}
+        for _,m in workspace:GetDescendants() do
+            if m.Name=="NormalWin" and m:IsA("Model") then
+                local btn=m:FindFirstChild("Button")
+                if btn and btn:IsA("BasePart") and btn.BrickColor.Name=="New Yeller" then
+                    local ruta=m:GetFullName()
+                    local mundo = ruta:match("World%d") or "World1"
+                    mundo = mundo:gsub("World", "Mundo")
+                    if filtrarMundo and filtrarMundo~="Todos" and mundo ~= filtrarMundo then continue end
+                    local etapa = 1
+                    local s = ruta:match("Stage(%d+)")
+                    if s then etapa=tonumber(s) end
+                    local valGanar = 0
+                    local mundoOriginal = mundo:gsub("Mundo", "World")
+                    if MainCfg.StageWins[mundoOriginal] and MainCfg.StageWins[mundoOriginal][etapa] then valGanar=MainCfg.StageWins[mundoOriginal][etapa] end
+                    table.insert(lista, {parte=btn, mundo=mundo, etapa=etapa, victorias=valGanar, modelo=m})
+                end
+            end
+        end
+        for mundo, etapas in pairs(MainCfg.StageWins) do
+            local mundoEsp = mundo:gsub("World", "Mundo")
+            if filtrarMundo and filtrarMundo~="Todos" and mundoEsp ~= filtrarMundo then continue end
+            if not isMundoDesbloqueado(mundoEsp) then continue end
+            for etapa, victorias in ipairs(etapas) do
+                local encontrado=false
+                for _,e in ipairs(lista) do if e.mundo==mundoEsp and e.etapa==etapa then encontrado=true break end end
+                if not encontrado then
+                    local carpetaMundo = workspace:FindFirstChild("Map") and workspace:FindFirstChild("Map"):FindFirstChild(mundo)
+                    local carpetaEtapas = carpetaMundo and carpetaMundo:FindFirstChild("Stages")
+                    local carpetaEtapa = carpetaEtapas and carpetaEtapas:FindFirstChild("Stage"..etapa)
+                    if carpetaEtapa then
+                        local cand=nil
+                        local principal = carpetaEtapa:FindFirstChild("Main")
+                        if principal then
+                            local se = principal:FindFirstChild("StageEnd")
+                            if se then
+                                if se:IsA("Model") then cand=se:FindFirstChild("Button") or se:FindFirstChildWhichIsA("BasePart", true) end
+                                if not cand and se:IsA("BasePart") then cand=se end
+                            end
+                        end
+                        if not cand then
+                            for _,d in carpetaEtapa:GetDescendants() do
+                                if d:IsA("BasePart") and d.BrickColor.Name=="New Yeller" and d.Name=="Button" then cand=d break end
+                            end
+                        end
+                        if not cand then cand=carpetaEtapa:FindFirstChildWhichIsA("BasePart", true) end
+                        if cand then table.insert(lista, {parte=cand, mundo=mundoEsp, etapa=etapa, victorias=victorias, modelo=carpetaEtapa, reserva=true}) end
+                    end
+                end
+            end
+        end
+        return lista
+    end
+
+    local function getMejorFijo()
+        local mejor=nil; local mejorGanar=-1
+        for mundo, etapas in pairs(PosGanarFija) do
+            local mundoEsp = mundo:gsub("World", "Mundo")
+            if not isMundoDesbloqueado(mundoEsp) then continue end
+            for etapa, pos in pairs(etapas) do
+                local victorias = MainCfg.StageWins[mundo] and MainCfg.StageWins[mundo][etapa] or 0
+                if victorias > mejorGanar then mejorGanar=victorias; mejor={mundo=mundo, etapa=etapa, victorias=victorias, pos=pos} end
+            end
+        end
+        if not mejor then return nil end
+        return {parte={CFrame=CFrame.new(mejor.pos), Position=mejor.pos, BrickColor={Name="New Yeller"}, Name="Button", GetFullName=function() return "Fijo:"..mejor.mundo..mejor.etapa end}, mundo=mejor.mundo, etapa=mejor.etapa, victorias=mejor.victorias, esFijo=true}
+    end
+
+    local function getMejorCultivable()
+        local fijo=getMejorFijo()
+        if fijo then return fijo end
+        local mejor=nil
+        local mejorGanar=-1
+        local lista=obtenerTodasGanarNormales("Todos")
+        for _,e in ipairs(lista) do
+            if e.reserva then continue end
+            if not isMundoDesbloqueado(e.mundo) then continue end
+            if e.victorias > mejorGanar then mejorGanar=e.victorias; mejor=e end
+        end
+        if not mejor then
+            for _,e in ipairs(lista) do
+                if not isMundoDesbloqueado(e.mundo) then continue end
+                if e.victorias > mejorGanar then mejorGanar=e.victorias; mejor=e end
+            end
+        end
+        if not mejor and #lista>0 then mejor=lista[#lista] end
+        return mejor
+    end
+
+    local function getObjetivoManual()
+        local opt = Options.AutoGanar_Manual and Options.AutoGanar_Manual.Value or opcionesGanar[1]
+        local mundo,etapa = parsearOpcionGanar(opt)
+        if not mundo then return nil end
+        local mundoOriginal = mundo:gsub("Mundo", "World")
+        if PosGanarFija[mundoOriginal] and PosGanarFija[mundoOriginal][etapa] then
+            local pos=PosGanarFija[mundoOriginal][etapa]
+            local mejorParte=nil; local mejorDist=80
+            for _,v in workspace:GetDescendants() do
+                if v:IsA("BasePart") and v.BrickColor.Name=="New Yeller" and v.Name=="Button" then
+                    local d=(v.Position - pos).Magnitude
+                    if d < mejorDist then mejorDist=d; mejorParte=v end
+                end
+            end
+            if mejorParte then
+                return {parte=mejorParte, mundo=mundo, etapa=etapa, victorias=MainCfg.StageWins[mundoOriginal][etapa] or 0, modelo=mejorParte.Parent}
+            else
+                return {parte={CFrame=CFrame.new(pos), Position=pos, BrickColor={Name="New Yeller"}, Name="Button", GetFullName=function() return "Fijo:"..mundo..etapa end}, mundo=mundo, etapa=etapa, victorias=MainCfg.StageWins[mundoOriginal][etapa] or 0, esFijo=true}
+            end
+        end
+        for _,e in obtenerTodasGanarNormales(mundo) do
+            if e.mundo==mundo and e.etapa==etapa then return e end
         end
         return nil
     end
 
-    Toggles.GranjarVictorias:OnChanged(function()
-        if Toggles.GranjarVictorias.Valor then
-            iniciarBucle("GranjarVictorias","GranjarVictorias","IntervaloVictorias",function()
-                local obj=obtenerObjetivoManual()
-                if not obj then return end
-                local raiz=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if not raiz then return end
-                raiz.CFrame=CFrame.new(obj.pos+Vector3.new(0,4,0))
-                task.wait(0.2)
-                local encontrado=nil
-                for _,parte in ipairs(workspace:GetDescendants()) do
-                    if parte:IsA("BasePart") and parte.BrickColor.Name=="New Yeller" and parte.Name=="Button" then
-                        if (parte.Position - obj.pos).Magnitude < 100 then encontrado=parte break end
+    Toggles.AutoGanar:OnChanged(function()
+        if Toggles.AutoGanar.Value then
+            runLoop("AutoGanar","AutoGanar","AutoGanar_Intervalo",function()
+                local entradaObjetivo = getObjetivoManual()
+                if not entradaObjetivo or not entradaObjetivo.parte then return end
+                local hrp=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if not hrp then return end
+                if entradaObjetivo.esFijo then
+                    local mundoOriginal = entradaObjetivo.mundo:gsub("Mundo", "World")
+                    local pos = PosGanarFija[mundoOriginal] and PosGanarFija[mundoOriginal][entradaObjetivo.etapa] or entradaObjetivo.parte.Position
+                    hrp.CFrame = CFrame.new(pos + Vector3.new(0,5,0))
+                    local mejorParte=nil; local mejorDist=80
+                    for _,v in workspace:GetDescendants() do
+                        if v:IsA("BasePart") and v.BrickColor.Name=="New Yeller" and v.Name=="Button" then
+                            local d=(v.Position - pos).Magnitude
+                            if d < mejorDist then mejorDist=d; mejorParte=v end
+                        end
                     end
+                    if mejorParte then
+                        pcall(function() firetouchinterest(hrp, mejorParte, 0) task.wait(0.1) firetouchinterest(hrp, mejorParte, 1) end)
+                    else
+                        pcall(function() firetouchinterest(hrp, entradaObjetivo.parte, 0) task.wait(0.1) firetouchinterest(hrp, entradaObjetivo.parte, 1) end)
+                    end
+                else
+                    hrp.CFrame = entradaObjetivo.parte.CFrame + Vector3.new(0,3,0)
+                    pcall(function()
+                        firetouchinterest(hrp, entradaObjetivo.parte, 0)
+                        task.wait(0.1)
+                        firetouchinterest(hrp, entradaObjetivo.parte, 1)
+                    end)
                 end
-                if encontrado then pcall(function() firetouchinterest(raiz,encontrado,0); task.wait(0.1); firetouchinterest(raiz,encontrado,1) end) end
+                task.wait(0.2)
             end)
-        else detenerBucle("GranjarVictorias") end
+        else stopLoop("AutoGanar") end
     end)
 
-    local DerV=Victorias:AgregarGrupoDerecha("Herramientas")
-    DerV:AgregarBotón({Texto="Ver etapas y estados", Función=function()
-        local info=""
-        for m,et in pairs(MainCfg.VictoriasEtapa) do
-            info=info..m..": "..(mundoDesbloqueado(m) and "✅" or "🔒").."\n"
+    local G2=CultivoGanar:AddRightGroupbox("Herramientas de Victorias")
+    G2:AddButton({Text="Listar Todas las GanarNormales", Func=function()
+        local lista=obtenerTodasGanarNormales("Todos")
+        local s=""
+        for _,e in ipairs(lista) do s=s..e.mundo.." Etapa"..e.etapa.." "..Formatter.Format(e.victorias)..(isMundoDesbloqueado(e.mundo) and " [desbloqueado]" or " [bloqueado]").."\n" end
+        print(s)
+        Library:Notify({Title="Victorias", Description="Ver consola F9", Time=3})
+    end})
+    G2:AddButton({Text="Mostrar Requisitos de Mundo", Func=function()
+        local s=""
+        for w,req in pairs(MainCfg.WorldRebirthsRequired) do
+            local wEsp = w:gsub("World", "Mundo")
+            s=s..wEsp.." necesita "..req.." renacimientos\n"
         end
-        Library:Notificar({Título="Mundos",Descripción=info,Tiempo=5})
+        Library:Notify({Title="Requisito Mundo", Description=s, Time=4})
     end})
 end
 
 do
-    local RecolectarG=Recolectar:AgregarGrupoIzquierda("Recolección")
-    RecolectarG:AgregarConmutador("RecolectarPlátanos", {Texto="Recolectar plátanos automático", Defecto=false})
-    crearControlIntervalo(RecolectarG,"IntervaloPlátanos","Frecuencia",0.5)
+    local G=CultivoRecolectar:AddLeftGroupbox("Recolectar")
+    G:AddToggle("AutoRecolectarPlatanos", {Text="Auto Recolectar Platanos", Default=false})
+    createIntervalSlider(G, "AutoRecolectarPlatanos_Intervalo", "Intervalo", 0.5)
+    G:AddDropdown("AutoRecolectarFragmentos_Seleccion", {Values={"Fragmento1","Fragmento2","Fragmento3","Fragmento4","Fragmento5","Fragmento6","Fragmento7","Fragmento8","Fragmento9"}, Default=1, Multi=true, Text="Auto Recolectar Fragmentos Hundidos", Searchable=true, SelectAllButtons=true, Expandable=true, ExpandColumns=3})
+    G:AddToggle("AutoRecolectarFragmentos", {Text="Auto Recolectar Fragmentos Hundidos", Default=false})
+    createIntervalSlider(G, "AutoRecolectarFragmentos_Intervalo", "Intervalo", 0.8)
 
-    RecolectarG:AgregarListaDesplegable("FragmentosSel", {Valores={"Fragmento1","Fragmento2","Fragmento3","Fragmento4","Fragmento5","Fragmento6","Fragmento7","Fragmento8","Fragmento9"}, Defecto=1, Multi=true, Texto="Fragmentos hundidos", SeleccionarTodo=true, Expandir=true})
-    RecolectarG:AgregarConmutador("RecolectarFragmentos", {Texto="Recolectar fragmentos", Defecto=false})
-    crearControlIntervalo(RecolectarG,"IntervaloFragmentos","Velocidad",0.8)
-
-    Toggles.RecolectarPlátanos:OnChanged(function()
-        if Toggles.RecolectarPlátanos.Valor then
-            iniciarBucle("RecolectarPlátanos","RecolectarPlátanos","IntervaloPlátanos",function()
-                local raiz=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                if not raiz then return end
-                for _,objeto in ipairs(workspace:GetDescendants()) do
-                    if objeto:IsA("BasePart") and objeto.Name:lower():find("plátano") then
-                        pcall(function() firetouchinterest(raiz,objeto,0); task.wait(0.06); firetouchinterest(raiz,objeto,1) end)
+    Toggles.AutoRecolectarPlatanos:OnChanged(function()
+        if Toggles.AutoRecolectarPlatanos.Value then
+            runLoop("AutoRecolectarPlatanos","AutoRecolectarPlatanos","AutoRecolectarPlatanos_Intervalo",function()
+                for _,v in workspace:GetDescendants() do
+                    if v.Name:lower():find("banana") and v:IsA("BasePart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        pcall(function()
+                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 0)
+                            task.wait(0.05)
+                            firetouchinterest(LocalPlayer.Character.HumanoidRootPart, v, 1)
+                        end)
                     end
-                    if objeto:IsA("ProximityPrompt") and objeto.ObjectText:lower():find("plátano") then pcall(function() fireproximityprompt(objeto) end) end
+                end
+                for _,p in workspace:GetDescendants() do
+                    if p:IsA("ProximityPrompt") and p.ObjectText:lower():find("banana") then pcall(function() fireproximityprompt(p) end) end
                 end
             end)
-        else detenerBucle("RecolectarPlátanos") end
+        else stopLoop("AutoRecolectarPlatanos") end
     end)
 
-    Toggles.RecolectarFragmentos:OnChanged(function()
-        if Toggles.RecolectarFragmentos.Valor then
-            iniciarBucle("RecolectarFragmentos","RecolectarFragmentos","IntervaloFragmentos",function()
-                local sel=Options.FragmentosSel and Options.FragmentosSel.Valor or {}
-                local lista={}
-                for k,v in pairs(sel) do if v then lista[#lista+1]=k end end
-                if #lista==0 then lista={"Fragmento1","Fragmento2","Fragmento3","Fragmento4","Fragmento5","Fragmento6","Fragmento7","Fragmento8","Fragmento9"} end
-                for _,nom in ipairs(lista) do if Remotes:FindFirstChild("RecolectarFragmento") then dispararSeguro(Remotes.RecolectarFragmento,nom) end end
+    Toggles.AutoRecolectarFragmentos:OnChanged(function()
+        if Toggles.AutoRecolectarFragmentos.Value then
+            runLoop("AutoRecolectarFragmentos","AutoRecolectarFragmentos","AutoRecolectarFragmentos_Intervalo",function()
+                local sel = Options.AutoRecolectarFragmentos_Seleccion and Options.AutoRecolectarFragmentos_Seleccion.Value or {}
+                local aRecolectar={}
+                if type(sel)=="table" then for k,v in pairs(sel) do if v then table.insert(aRecolectar,k) end end end
+                if #aRecolectar==0 then aRecolectar={"Shard1","Shard2","Shard3","Shard4","Shard5","Shard6","Shard7","Shard8","Shard9"} end
+                for _,sh in ipairs(aRecolectar) do
+                    local num = sh:match("Fragmento(%d+)") or sh:match("Shard(%d+)") or "1"
+                    local nombreOriginal = "Shard"..num
+                    if Remotes:FindFirstChild("CollectShard") then safeFire(Remotes.CollectShard, nombreOriginal) end
+                end
             end)
-        else detenerBucle("RecolectarFragmentos") end
+        else stopLoop("AutoRecolectarFragmentos") end
     end)
 end
 
 do
-    local CarreraG=Carrera:AgregarGrupoIzquierda("Participación")
-    CarreraG:AgregarConmutador("EntrarCarrera", {Texto="Unirse automáticamente", Defecto=false})
-    crearControlIntervalo(CarreraG,"IntervaloCarrera","Repetición",2)
-    Toggles.EntrarCarrera:OnChanged(function()
-        if Toggles.EntrarCarrera.Valor then iniciarBucle("EntrarCarrera","EntrarCarrera","IntervaloCarrera",function() if Remotes:FindFirstChild("UnirseCarrera") then dispararSeguro(Remotes.UnirseCarrera) end end)
-        else detenerBucle("EntrarCarrera") end
+    local G=CultivoCarrera:AddLeftGroupbox("Carrera")
+    G:AddToggle("AutoUnirseCarrera", {Text="Auto Unirse a Carrera", Default=false})
+    createIntervalSlider(G, "AutoUnirseCarrera_Intervalo", "Intervalo", 2)
+
+    Toggles.AutoUnirseCarrera:OnChanged(function()
+        if Toggles.AutoUnirseCarrera.Value then
+            runLoop("AutoUnirseCarrera","AutoUnirseCarrera","AutoUnirseCarrera_Intervalo",function()
+                if Remotes:FindFirstChild("JoinRace") then safeFire(Remotes.JoinRace) end
+            end)
+        else stopLoop("AutoUnirseCarrera") end
     end)
 end
 
 do
-    local RecompG=Recompensas:AgregarGrupoIzquierda("Sistema")
-    RecompG:AgregarConmutador("ReclamarGratis", {Texto="Recompensa gratis", Defecto=false})
-    crearControlIntervalo(RecompG,"IntervaloGratis","Tiempo",5)
-    RecompG:AgregarConmutador("ReclamarRacha", {Texto="Racha diaria", Defecto=false})
-    crearControlIntervalo(RecompG,"IntervaloRacha","Tiempo",5)
-    RecompG:AgregarConmutador("ReclamarSinConexion", {Texto="Ganancias sin conexión", Defecto=false})
-    crearControlIntervalo(RecompG,"IntervaloSinConexión","Tiempo",5)
-    RecompG:AgregarConmutador("CanjearCodigos", {Texto="Activar códigos", Defecto=false})
-    crearControlIntervalo(RecompG,"IntervaloCodigos","Velocidad",3)
+    local G=CultivoRecompensas:AddLeftGroupbox("Recompensas")
+    G:AddToggle("AutoReclamarRecompensaGratis", {Text="Auto Reclamar Recompensa Gratis", Default=false})
+    createIntervalSlider(G, "AutoReclamarRecompensaGratis_Intervalo", "Intervalo", 5)
+    G:AddToggle("AutoReclamarRecompensaRacha", {Text="Auto Reclamar Recompensa de Racha", Default=false})
+    createIntervalSlider(G, "AutoReclamarRecompensaRacha_Intervalo", "Intervalo", 5)
+    G:AddToggle("AutoReclamarGananciasFuera", {Text="Auto Reclamar Ganancias Fuera de Linea", Default=false})
+    createIntervalSlider(G, "AutoReclamarGananciasFuera_Intervalo", "Intervalo", 5)
+    G:AddToggle("AutoCanjearCodigo", {Text="Auto Canjear Codigo", Default=false})
+    createIntervalSlider(G, "AutoCanjearCodigo_Intervalo", "Intervalo", 3)
 
-    local mapaRemotos={ReclamarGratis="RecompensaGratis", ReclamarRacha="RecompensaRacha", ReclamarSinConexion="GananciasSinConexion"}
-    for conmut,rem in pairs(mapaRemotos) do
-        Toggles[conmut]:OnChanged(function()
-            if Toggles[conmut].Valor then iniciarBucle(conmut,conmut,conmut.."_Intervalo",function() if Remotes:FindFirstChild(rem) then dispararSeguro(Remotes[rem]) end end)
-            else detenerBucle(conmut) end
+    local mapa={AutoReclamarRecompensaGratis="ClaimFreeReward", AutoReclamarRecompensaRacha="ClaimStreakReward", AutoReclamarGananciasFuera="ClaimOfflineEarnings"}
+    for tog,rem in pairs(mapa) do
+        Toggles[tog]:OnChanged(function()
+            if Toggles[tog].Value then
+                runLoop(tog,tog,tog.."_Intervalo",function() if Remotes:FindFirstChild(rem) then safeFire(Remotes[rem]) end end)
+            else stopLoop(tog) end
         end)
     end
 
-    Toggles.CanjearCodigos:OnChanged(function()
-        if Toggles.CanjearCodigos.Valor then
-            iniciarBucle("CanjearCodigos","CanjearCodigos","IntervaloCodigos",function()
-                local cods={"LIBRERIA","MONO","VELOCIDAD","VICTORIAS"}
-                for _,c in ipairs(cods) do if Remotes:FindFirstChild("CanjearCodigo") then dispararSeguro(Remotes.CanjearCodigo,c) end end
+    Toggles.AutoCanjearCodigo:OnChanged(function()
+        if Toggles.AutoCanjearCodigo.Value then
+            runLoop("AutoCanjearCodigo","AutoCanjearCodigo","AutoCanjearCodigo_Intervalo",function()
+                local codigos={"RELEASE","MONKEY","SPEED","WINS"}
+                for _,codigo in ipairs(codigos) do if Remotes:FindFirstChild("RedeemCode") then safeFire(Remotes.RedeemCode, codigo) end end
             end)
-        else detenerBucle("CanjearCodigos") end
+        else stopLoop("AutoCanjearCodigo") end
     end)
 
-    local OtrosR=Recompensas:AgregarGrupoDerecha("Extras")
-    OtrosR:AgregarConmutador("GirarRuleta", {Texto="Girar ruleta automático", Defecto=false})
-    crearControlIntervalo(OtrosR,"IntervaloRuleta","Tiempo",3)
-    OtrosR:AgregarConmutador("CofreCalavera", {Texto="Abrir cofre calavera", Defecto=false})
-    crearControlIntervalo(OtrosR,"IntervaloCalavera","Velocidad",1)
-    OtrosR:AgregarConmutador("CofreSecreto", {Texto="Abrir cofre oculto", Defecto=false})
-    crearControlIntervalo(OtrosR,"IntervaloSecreto","Velocidad",1)
+    local G2=CultivoRecompensas:AddRightGroupbox("Otros")
+    G2:AddToggle("AutoGirarRuleta", {Text="Auto Girar Ruleta", Default=false})
+    createIntervalSlider(G2, "AutoGirarRuleta_Intervalo", "Intervalo", 3)
+    G2:AddToggle("AutoAbrirCofreCalavera", {Text="Auto Abrir Cofre Calavera", Default=false})
+    createIntervalSlider(G2, "AutoAbrirCofreCalavera_Intervalo", "Intervalo", 1)
+    G2:AddToggle("AutoAbrirCofreSecreto", {Text="Auto Abrir Cofre Secreto", Default=false})
+    createIntervalSlider(G2, "AutoAbrirCofreSecreto_Intervalo", "Intervalo", 1)
+    G2:AddToggle("AutoEntrarPuertaSecreta", {Text="Auto Entrar Puerta Secreta", Default=false})
+    createIntervalSlider(G2, "AutoEntrarPuertaSecreta_Intervalo", "Intervalo", 2)
+    G2:AddToggle("AutoEstablecerObjetivoRegalo", {Text="Auto Establecer Objetivo Regalo", Default=false})
+    createIntervalSlider(G2, "AutoEstablecerObjetivoRegalo_Intervalo", "Intervalo", 5)
 
-    Toggles.GirarRuleta:OnChanged(function()
-        if Toggles.GirarRuleta.Valor then iniciarBucle("GirarRuleta","GirarRuleta","IntervaloRuleta",function() if Remotes:FindFirstChild("GenerarRuleta") then dispararSeguro(Remotes.GenerarRuleta) end; if Remotes:FindFirstChild("GirarRuletaPremio") then dispararSeguro(Remotes.GirarRuletaPremio) end end)
-        else detenerBucle("GirarRuleta") end
+    Toggles.AutoGirarRuleta:OnChanged(function()
+        if Toggles.AutoGirarRuleta.Value then
+            runLoop("AutoGirarRuleta","AutoGirarRuleta","AutoGirarRuleta_Intervalo",function()
+                if Remotes:FindFirstChild("SpawnWheel") then safeFire(Remotes.SpawnWheel) end
+                if Remotes:FindFirstChild("PlayLootBoxSpin") then safeFire(Remotes.PlayLootBoxSpin) end
+            end)
+        else stopLoop("AutoGirarRuleta") end
     end)
-    Toggles.CofreCalavera:OnChanged(function()
-        if Toggles.CofreCalavera.Valor then iniciarBucle("CofreCalavera","CofreCalavera","IntervaloCalavera",function() if Remotes:FindFirstChild("AbrirCalavera") then dispararSeguro(Remotes.AbrirCalavera,1) end end)
-        else detenerBucle("CofreCalavera") end
+
+    Toggles.AutoAbrirCofreCalavera:OnChanged(function()
+        if Toggles.AutoAbrirCofreCalavera.Value then
+            runLoop("AutoAbrirCofreCalavera","AutoAbrirCofreCalavera","AutoAbrirCofreCalavera_Intervalo",function()
+                if Remotes:FindFirstChild("OpenSkullChest") then safeFire(Remotes.OpenSkullChest, 1) end
+            end)
+        else stopLoop("AutoAbrirCofreCalavera") end
     end)
-    Toggles.CofreSecreto:OnChanged(function()
-        if Toggles.CofreSecreto.Valor then iniciarBucle("CofreSecreto","CofreSecreto","IntervaloSecreto",function() if Remotes:FindFirstChild("AbrirSecreto") then dispararSeguro(Remotes.AbrirSecreto,1) end end)
-        else detenerBucle("CofreSecreto") end
+
+    Toggles.AutoAbrirCofreSecreto:OnChanged(function()
+        if Toggles.AutoAbrirCofreSecreto.Value then
+            runLoop("AutoAbrirCofreSecreto","AutoAbrirCofreSecreto","AutoAbrirCofreSecreto_Intervalo",function()
+                if Remotes:FindFirstChild("OpenSecretChest") then safeFire(Remotes.OpenSecretChest, 1) end
+            end)
+        else stopLoop("AutoAbrirCofreSecreto") end
+    end)
+
+    Toggles.AutoEntrarPuertaSecreta:OnChanged(function()
+        if Toggles.AutoEntrarPuertaSecreta.Value then
+            runLoop("AutoEntrarPuertaSecreta","AutoEntrarPuertaSecreta","AutoEntrarPuertaSecreta_Intervalo",function()
+                if Remotes:FindFirstChild("SecretDoorRequestEnter") then safeFire(Remotes.SecretDoorRequestEnter) end
+            end)
+        else stopLoop("AutoEntrarPuertaSecreta") end
+    end)
+
+    Toggles.AutoEstablecerObjetivoRegalo:OnChanged(function()
+        if Toggles.AutoEstablecerObjetivoRegalo.Value then
+            runLoop("AutoEstablecerObjetivoRegalo","AutoEstablecerObjetivoRegalo","AutoEstablecerObjetivoRegalo_Intervalo",function()
+                if Remotes:FindFirstChild("SetGiftTarget") then safeFire(Remotes.SetGiftTarget, LocalPlayer.Name) end
+            end)
+        else stopLoop("AutoEstablecerObjetivoRegalo") end
     end)
 end
 
 do
-    local ColasG=ColasP:AgregarGrupoIzquierda("Gestión de colas")
-    ColasG:AgregarConmutador("ComprarCola", {Texto="Adquirir mejor disponible", Defecto=false})
-    crearControlIntervalo(ColasG,"IntervaloCompraCola","Tiempo",1)
-    ColasG:AgregarConmutador("EquiparCola", {Texto="Poner la mejor que tengas", Defecto=false})
-    crearControlIntervalo(ColasG,"IntervaloEquipCola","Tiempo",1)
-    ColasG:AgregarEtiqueta("Sistema directo: selecciona mejora y verifica tu inventario", true)
+    local G=InvColas:AddLeftGroupbox("Colas de Mono")
+    G:AddToggle("AutoComprarColas", {Text="Auto Comprar Mejor Cola", Default=false, Tooltip="Dispara SeleccionarMejora para la mas alta accesible"})
+    createIntervalSlider(G, "AutoComprarColas_Intervalo", "Intervalo", 1)
+    G:AddToggle("AutoEquiparMejorColas", {Text="Auto Equipar Mejor Cola Poseida", Default=false})
+    createIntervalSlider(G, "AutoEquiparMejorColas_Intervalo", "Intervalo", 1)
+    G:AddLabel("Sin menu desplegable de Parar. Usa remoto SeleccionarMejora + verificacion de MejorasDesbloqueadas.", true)
 
-    local function mejorAccesibleSinComprar()
-        local mejor=nil local reqMax=-1
-        for ind,conf in ipairs(UpgradesCfg) do
-            if conf and conf.RequisitoVictorias and not Data.MejorasDesbloqueadas:FindFirstChild(tostring(ind)) then
-                if NumerosGrandes.MayorIgual(Data.Victorias, conf.RequisitoVictorias) and conf.RequisitoVictorias>reqMax then reqMax=conf.RequisitoVictorias mejor=ind end
+    local function getMejorAccesibleBloqueada()
+        local BN=nil
+        pcall(function() BN=require(game.ReplicatedStorage.Util.BigNum) end)
+        if not BN then BN=BigNum end
+        local mejor=nil; local mejorReq=-1
+        for idx,cfg in ipairs(UpgradesCfg) do
+            local req=cfg and cfg.WinsRequirement
+            if cfg and not Data.UnlockedUpgrades:FindFirstChild(tostring(idx)) and req then
+                local accesible=false
+                if BN and BN.GreaterEqual then
+                    accesible=BN.GreaterEqual(Data.Wins, req)
+                else
+                    accesible=BigNum.GreaterEqual(Data.Wins, req)
+                end
+                if accesible and req > mejorReq then mejorReq=req; mejor=idx end
             end
         end
         return mejor
     end
-    local function mejorEquipable()
-        local ultimo=1
-        for _,obj in ipairs(Data.MejorasDesbloqueadas:GetChildren()) do local n=tonumber(obj.Name) if n and n>ultimo then ultimo=n end end
-        return ultimo
+
+    local function getMejorAccesible()
+        local mejor=Data.SelectedUpgrade.Value
+        local mejorReq=-1
+        for idx,cfg in ipairs(UpgradesCfg) do
+            if cfg and cfg.WinsRequirement and BigNum.GreaterEqual(Data.Wins, cfg.WinsRequirement) then
+                if cfg.WinsRequirement > mejorReq then mejorReq=cfg.WinsRequirement; mejor=idx end
+            end
+        end
+        return mejor
     end
 
-    Toggles.ComprarCola:OnChanged(function()
-        if Toggles.ComprarCola.Valor then iniciarBucle("ComprarCola","ComprarCola","IntervaloCompraCola",function() local m=mejorAccesibleSinComprar() if m and m~=Data.MejoraSeleccionada.Valor then dispararSeguro(Remotes.SeleccionarMejora,m) end end)
-        else detenerBucle("ComprarCola") end
+    local function getMejorPoseida()
+        local mejor=1
+        local maxIdx=1
+        for _,v in Data.UnlockedUpgrades:GetChildren() do
+            local n=tonumber(v.Name)
+            if n and n>maxIdx then maxIdx=n end
+        end
+        return maxIdx
+    end
+
+    Toggles.AutoComprarColas:OnChanged(function()
+        if Toggles.AutoComprarColas.Value then
+            runLoop("AutoComprarColas","AutoComprarColas","AutoComprarColas_Intervalo",function()
+                local mejor=getMejorAccesibleBloqueada()
+                if mejor and mejor ~= Data.SelectedUpgrade.Value then
+                    safeFire(Remotes.SelectUpgrade, mejor)
+                    for _,btn in CollectionService:GetTagged("UpgradeButton") do
+                        if btn:GetAttribute("Upgrade")==mejor then
+                            local parte=btn:FindFirstChild("Button")
+                            if parte and LocalPlayer.Character then
+                                local hrp=LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                if hrp then
+                                    pcall(function()
+                                        firetouchinterest(hrp, parte, 0)
+                                        task.wait(0.05)
+                                        firetouchinterest(hrp, parte, 1)
+                                    end)
+                                end
+                            end
+                            break
+                        end
+                    end
+                end
+            end)
+        else stopLoop("AutoComprarColas") end
     end)
-    Toggles.EquiparCola:OnChanged(function()
-        if Toggles.EquiparCola.Valor then iniciarBucle("EquiparCola","EquiparCola","IntervaloEquipCola",function() local m=mejorEquipable() if m~=Data.MejoraSeleccionada.Valor then dispararSeguro(Remotes.SeleccionarMejora,m) end end)
-        else detenerBucle("EquiparCola") end
+
+    Toggles.AutoEquiparMejorColas:OnChanged(function()
+        if Toggles.AutoEquiparMejorColas.Value then
+            runLoop("AutoEquiparMejorColas","AutoEquiparMejorColas","AutoEquiparMejorColas_Intervalo",function()
+                local mejor=getMejorPoseida()
+                if mejor ~= Data.SelectedUpgrade.Value then safeFire(Remotes.SelectUpgrade, mejor) end
+            end)
+        else stopLoop("AutoEquiparMejorColas") end
     end)
 
-    local DerC=ColasP:AgregarGrupoDerecha("Estado actual")
-    DerC:AgregarEtiqueta("Cola: "..tostring(UpgradesCfg[Data.MejoraSeleccionada.Valor] and UpgradesCfg[Data.MejoraSeleccionada.Valor].Cola or "¿?"), true)
-    DerC:AgregarBotón({Texto="Equipar ahora", Función=function() dispararSeguro(Remotes.SeleccionarMejora,mejorEquipable()) end})
+    local G2=InvColas:AddRightGroupbox("Info de Colas")
+    G2:AddLabel("Actual: "..tostring(UpgradesCfg[Data.SelectedUpgrade.Value] and UpgradesCfg[Data.SelectedUpgrade.Value].Skin or "?").." idx "..tostring(Data.SelectedUpgrade.Value), true)
+    Data.SelectedUpgrade.Changed:Connect(function()
+        local cur=UpgradesCfg[Data.SelectedUpgrade.Value]
+        if cur then Library:Notify({Title="Cola", Description=cur.Skin.." (+"..Formatter.Format(cur.Multi)..")", Time=2}) end
+    end)
+    G2:AddButton({Text="Equipar Mejor Ahora", Func=function()
+        local mejor=getMejorPoseida()
+        safeFire(Remotes.SelectUpgrade, mejor)
+    end})
+    G2:AddButton({Text="Comprar Mejor Accesible Ahora", Func=function()
+        local mejor=getMejorAccesible()
+        safeFire(Remotes.SelectUpgrade, mejor)
+    end})
 end
 
 do
-    local EstelasL={"Rojo","Azul","Verde","Arcoíris","Galaxia","Divina","Hada","Espectral","Yin Yang","Luna Sangrienta","FlorCerezo","Rápido","Vacío","Vapor"}
-    local AurasL={"Ámbar","Hielo","Naturaleza","Arcoíris","Lunar","Brillo","Hada","Espectral","Yin Yang","Luna Sangrienta","FlorCerezo","Eléctrica","Vacío","Vapor"}
+    local Senderos={"Red","Blue","Green","Rainbow","Galaxy","Divine","Fairy","Spectral","Yin Yang","Bloodmoon","Sakura","Flash","Void","Steampunk"}
+    local G=InvSenderos:AddLeftGroupbox("Comprar Sendero")
+    G:AddToggle("AutoComprarSendero", {Text="Auto Comprar Siguiente Sendero", Default=false, Tooltip="Compra el siguiente sendero accesible"})
+    createIntervalSlider(G, "AutoComprarSendero_Intervalo", "Intervalo", 1)
+    local G2=InvSenderos:AddRightGroupbox("Equipar Sendero")
+    G2:AddToggle("AutoEquiparMejorSendero", {Text="Auto Equipar Mejor Sendero", Default=false})
+    createIntervalSlider(G2, "AutoEquiparMejorSendero_Intervalo", "Intervalo", 1)
 
-    local EstelasG=Estelas:AgregarGrupoIzquierda("Estelas")
-    EstelasG:AgregarConmutador("ComprarEstela", {Texto="Siguiente estela", Defecto=false})
-    crearControlIntervalo(EstelasG,"IntervaloEstela","Espera",1)
-    EstelasG:AgregarConmutador("UsarEstela", {Texto="Equipar mejor", Defecto=false})
-    crearControlIntervalo(EstelasG,"IntervaloUsarEstela","Espera",1)
-    Toggles.ComprarEstela:OnChanged(function() if Toggles.ComprarEstela.Valor then iniciarBucle("ComprarEstela","ComprarEstela","IntervaloEstela",function() for _,nom in ipairs(EstelasL) do if not Data.EstelasDesbloqueadas:FindFirstChild(nom) then dispararSeguro(Remotes.ComprarEstela,nom) break end end) else detenerBucle("ComprarEstela") end end)
-    Toggles.UsarEstela:OnChanged(function() if Toggles.UsarEstela.Valor then iniciarBucle("UsarEstela","UsarEstela","IntervaloUsarEstela",function() local b=nil for i=#EstelasL,1,-1 do if Data.EstelasDesbloqueadas:FindFirstChild(EstelasL[i]) then b=EstelasL[i] break end if b then dispararSeguro(Remotes.EquiparEstela,b) end end) else detenerBucle("UsarEstela") end end)
+    Toggles.AutoComprarSendero:OnChanged(function()
+        if Toggles.AutoComprarSendero.Value then
+            runLoop("AutoComprarSendero","AutoComprarSendero","AutoComprarSendero_Intervalo",function()
+                for _,nombre in ipairs(Senderos) do
+                    if not Data.UnlockedTrails:FindFirstChild(nombre) then
+                        if Remotes:FindFirstChild("BuyTrail") then safeFire(Remotes.BuyTrail, nombre) end
+                        break
+                    end
+                end
+            end)
+        else stopLoop("AutoComprarSendero") end
+    end)
 
-    local AurasG=Auras:AgregarGrupoIzquierda("Auras")
-    AurasG:AgregarConmutador("ComprarAura", {Texto="Siguiente aura", Defecto=false})
-    crearControlIntervalo(AurasG,"IntervaloAura","Espera",1)
-    AurasG:AgregarConmutador("UsarAura", {Texto="Equipar mejor aura", Defecto=false})
-    crearControlIntervalo(AurasG,"IntervaloUsarAura","Espera",1)
-    Toggles.ComprarAura:OnChanged(function() if Toggles.ComprarAura.Valor then iniciarBucle("ComprarAura","ComprarAura","IntervaloAura",function() for _,nom in ipairs(AurasL) do if not Data.AurasDesbloqueadas:FindFirstChild(nom) then dispararSeguro(Remotes.ComprarAura,nom) break end end) else detenerBucle("ComprarAura") end end)
-    Toggles.UsarAura:OnChanged(function() if Toggles.UsarAura.Valor then iniciarBucle("UsarAura","UsarAura","IntervaloUsarAura",function() local b=nil for i=#AurasL,1,-1 do if Data.AurasDesbloqueadas:FindFirstChild(AurasL[i]) then b=AurasL[i] break end if b then dispararSeguro(Remotes.EquiparAura,b) end end) else detenerBucle("UsarAura") end end)
+    Toggles.AutoEquiparMejorSendero:OnChanged(function()
+        if Toggles.AutoEquiparMejorSendero.Value then
+            runLoop("AutoEquiparMejorSendero","AutoEquiparMejorSendero","AutoEquiparMejorSendero_Intervalo",function()
+                local mejor=nil
+                for i=#Senderos,1,-1 do if Data.UnlockedTrails:FindFirstChild(Senderos[i]) then mejor=Senderos[i] break end end
+                if mejor and Remotes:FindFirstChild("EquipTrail") then safeFire(Remotes.EquipTrail, mejor) end
+            end)
+        else stopLoop("AutoEquiparMejorSendero") end
+    end)
 end
 
 do
-    local AutoRen=AutoRenac:AgregarGrupoIzquierda("Sistema automático")
-    AutoRen:AgregarConmutador("AutoRenacer", {Texto="Renacimiento automático", Defecto=false})
-    crearControlIntervalo(AutoRen,"IntervaloRenacer","Velocidad",1)
-    Toggles.AutoRenacer:OnChanged(function() if Toggles.AutoRenacer.Valor then iniciarBucle("AutoRenacer","AutoRenacer","IntervaloRenacer",function() if Remotes:FindFirstChild("Renacer") then dispararSeguro(Remotes.Renacer) end end) else detenerBucle("AutoRenacer") end end)
+    local Auras={"Amber","Ice Cold","Nature","Rainbow","Lunar","Sparkle","Fairy","Spectral","Yin Yang","Bloodmoon","Sakura","Electric","Void","Steampunk"}
+    local G=InvAuras:AddLeftGroupbox("Comprar Aura")
+    G:AddToggle("AutoComprarAura", {Text="Auto Comprar Siguiente Aura", Default=false, Tooltip="Compra la siguiente aura accesible"})
+    createIntervalSlider(G, "AutoComprarAura_Intervalo", "Intervalo", 1)
+    local G2=InvAuras:AddRightGroupbox("Equipar Aura")
+    G2:AddToggle("AutoEquiparAura", {Text="Auto Equipar Mejor Aura", Default=false, Tooltip="Equipa la mejor poseida"})
+    createIntervalSlider(G2, "AutoEquiparAura_Intervalo", "Intervalo", 1)
 
-    local InfoR=InfoRenac:AgregarGrupoIzquierda("Datos del jugador")
-    InfoR:AgregarEtiqueta("✅ Sistema listo", true)
-    InfoR:AgregarBotón({Texto="¡Renacer YA!", Función=function() if Remotes:FindFirstChild("Renacer") then dispararSeguro(Remotes.Renacer) end end})
+    Toggles.AutoComprarAura:OnChanged(function()
+        if Toggles.AutoComprarAura.Value then
+            runLoop("AutoComprarAura","AutoComprarAura","AutoComprarAura_Intervalo",function()
+                for _,nombre in ipairs(Auras) do
+                    if not Data.UnlockedAuras:FindFirstChild(nombre) then
+                        if Remotes:FindFirstChild("BuyAura") then safeFire(Remotes.BuyAura, nombre) end
+                        break
+                    end
+                end
+            end)
+        else stopLoop("AutoComprarAura") end
+    end)
+
+    Toggles.AutoEquiparAura:OnChanged(function()
+        if Toggles.AutoEquiparAura.Value then
+            runLoop("AutoEquiparAura","AutoEquiparAura","AutoEquiparAura_Intervalo",function()
+                local mejor=nil
+                for i=#Auras,1,-1 do
+                    if Data.UnlockedAuras:FindFirstChild(Auras[i]) then mejor=Auras[i]; break end
+                end
+                if mejor and Remotes:FindFirstChild("EquipAura") then safeFire(Remotes.EquipAura, mejor) end
+            end)
+        else stopLoop("AutoEquiparAura") end
+    end)
 end
 
 do
-    local Sistema=Pestañas.Ajustes:AgregarGrupoIzquierda("Control")
-    Sistema:AgregarConmutador("SistemaAntiAFK", {Texto="Evitar desconexión", Defecto=true})
-    activarAntiAFK(true)
-    Toggles.SistemaAntiAFK:OnChanged(function() activarAntiAFK(Toggles.SistemaAntiAFK.Valor) end)
+    local Amuletos={"Lucky Key","Treasure Coin","Emerald Talisman","Royal Crown","Lucky Idol","Monkey Paw","Banana Peel","Jungle Gem","Wind Feather","Vine Bracelet","Cheetah Totem","Swift Mask","Lava Drop","Hot Coal","Flame Skull","Magma Crystal","Phoenix Feather","Inferno Crown","Fire Boot","Flame Roller","Rocket Ember","Lava Lightning Bolt","Flaming Wing","Inferno Jetpack","Coconut","Starfish","Treasure Chest","Beach Bucket","Golden Pineapple","Sun Idol","Flip Flop","Sunglasses","Surfboard","Seagull Wing","Rocket Surfboard","Rainbow Wave","Gummy Bear","Candy Corn","Chocolate Bar","Lollipop","Giant Cupcake","Candy Castle","Peppermint","Candy Cane","Bubblegum Rocket","Sugar Star","Rainbow Candy Wing","Chocolate Mask","Snowflake","Ice Crystal","Frozen Chest","Snow Globe","Ice Crown","Glacier Core","Ice Skate","Frozen Feather","Blizzard Arrow","Snowboard","Frost Wing","Aurora Crystal"}
+    local G=InvAmuletosTienda:AddLeftGroupbox("Tienda de Amuletos")
+    G:AddDropdown("AutoComprarAmuleto_Seleccion", {Values=Amuletos, Default=1, Multi=true, Text="Amuletos a Comprar", Searchable=true, SelectAllButtons=true, Expandable=true, ExpandColumns=3})
+    G:AddToggle("AutoComprarAmuleto", {Text="Auto Comprar Amuletos Seleccionados", Default=false})
+    createIntervalSlider(G, "AutoComprarAmuleto_Intervalo", "Intervalo", 1)
 
-    Sistema:AgregarDivisor()
-    Sistema:AgregarBotón({Texto="Cerrar interfaz", Función=function() Ventana:Destruir() end})
+    Toggles.AutoComprarAmuleto:OnChanged(function()
+        if Toggles.AutoComprarAmuleto.Value then
+            runLoop("AutoComprarAmuleto","AutoComprarAmuleto","AutoComprarAmuleto_Intervalo",function()
+                local sel = Options.AutoComprarAmuleto_Seleccion and Options.AutoComprarAmuleto_Seleccion.Value or {}
+                local seleccionados={}
+                if type(sel)=="table" then for k,v in pairs(sel) do if v then seleccionados[k]=true end end
+                elseif type(sel)=="string" then seleccionados[sel]=true end
+                local tieneSel=false; for _ in pairs(seleccionados) do tieneSel=true break end
+                if not tieneSel then seleccionados["LlaveSuerte"]=true end
+                local tiendaMundo = Data:FindFirstChild("CharmShop") and Data.CharmShop:FindFirstChild("World"..tostring(Data.World.Value))
+                if not tiendaMundo then return end
+                for i=1,3 do
+                    local ranura=tiendaMundo:FindFirstChild("Slot"..i)
+                    local comprado=tiendaMundo:FindFirstChild("Bought"..i)
+                    if ranura and ranura:IsA("StringValue") and comprado and not comprado.Value then
+                        local nombre=ranura.Value
+                        if seleccionados[nombre] and Remotes:FindFirstChild("BuyCharm") then
+                            safeFire(Remotes.BuyCharm, i)
+                            task.wait(0.6)
+                        end
+                    end
+                end
+            end)
+        else stopLoop("AutoComprarAmuleto") end
+    end)
 end
+
+do
+    local Rarezas={"Raro","Epico","Legendario","Mitico"}
+    local G=InvAmuletosGestionar:AddLeftGroupbox("Equipar Amuletos")
+    G:AddDropdown("AutoEquiparMejoresAmuletos_Modo", {Values={"Victorias","Velocidad"}, Default=1, Multi=false, Text="Modo Equipar Mejor"})
+    G:AddToggle("AutoEquiparMejoresAmuletos", {Text="Auto Equipar Mejores Amuletos", Default=false})
+    createIntervalSlider(G, "AutoEquiparMejoresAmuletos_Intervalo", "Intervalo", 1)
+    G:AddToggle("AutoAlternarBloquearAmuletos", {Text="Auto Alternar Bloquear Amuletos", Default=false})
+    createIntervalSlider(G, "AutoAlternarBloquearAmuletos_Intervalo", "Intervalo", 1)
+
+    local G2=InvAmuletosGestionar:AddRightGroupbox("Eliminar/Fusionar")
+    G2:AddDropdown("AutoEliminarAmuletos_DetenerseEn", {Values=Rarezas, Default=3, Multi=false, Text="Detener en Rareza (Eliminar)"})
+    G2:AddToggle("AutoEliminarAmuletos", {Text="Auto Eliminar Amuletos", Default=false})
+    createIntervalSlider(G2, "AutoEliminarAmuletos_Intervalo", "Intervalo", 1)
+    G2:AddToggle("AutoFusionarAmuletos", {Text="Auto Fusionar Amuletos (al Maximo)", Default=false, Tooltip="Fusiona 3 amuletos iguales a la siguiente estrella"})
+    createIntervalSlider(G2, "AutoFusionarAmuletos_Intervalo", "Intervalo", 1)
+
+    Toggles.AutoEquiparMejoresAmuletos:OnChanged(function()
+        if Toggles.AutoEquiparMejoresAmuletos.Value then
+            runLoop("AutoEquiparMejoresAmuletos","AutoEquiparMejoresAmuletos","AutoEquiparMejoresAmuletos_Intervalo",function()
+                local modo = Options.AutoEquiparMejoresAmuletos_Modo and Options.AutoEquiparMejoresAmuletos_Modo.Value or "Victorias"
+                local modoRemoto = (modo == "Velocidad") and "Speed" or "Wins"
+                if Remotes:FindFirstChild("EquipBestCharms") then
+                    safeFire(Remotes.EquipBestCharms, modoRemoto)
+                end
+            end)
+        else stopLoop("AutoEquiparMejoresAmuletos") end
+    end)
+
+    Toggles.AutoAlternarBloquearAmuletos:OnChanged(function()
+        if Toggles.AutoAlternarBloquearAmuletos.Value then
+            runLoop("AutoAlternarBloquearAmuletos","AutoAlternarBloquearAmuletos","AutoAlternarBloquearAmuletos_Intervalo",function()
+                if Remotes:FindFirstChild("ToggleLockCharms") then safeFire(Remotes.ToggleLockCharms) end
+            end)
+        else stopLoop("AutoAlternarBloquearAmuletos") end
+    end)
+
+    Toggles.AutoEliminarAmuletos:OnChanged(function()
+        if Toggles.AutoEliminarAmuletos.Value then
+            runLoop("AutoEliminarAmuletos","AutoEliminarAmuletos","AutoEliminarAmuletos_Intervalo",function()
+                local sel=Options.AutoEliminarAmuletos_DetenerseEn and Options.AutoEliminarAmuletos_DetenerseEn.Value or "Raro"
+                local mapaRarezas={Raro="Rare", Epico="Epic", Legendario="Legendary", Mitico="Mythic"}
+                local selRemoto = mapaRarezas[sel] or "Rare"
+                if Remotes:FindFirstChild("DeleteCharms") then safeFire(Remotes.DeleteCharms, selRemoto) end
+            end)
+        else stopLoop("AutoEliminarAmuletos") end
+    end)
+
+    Toggles.AutoFusionarAmuletos:OnChanged(function()
+        if Toggles.AutoFusionarAmuletos.Value then
+            runLoop("AutoFusionarAmuletos","AutoFusionarAmuletos","AutoFusionarAmuletos_Intervalo",function()
+                local carpetaAmuletos = Data:FindFirstChild("Charms")
+                if not carpetaAmuletos then return end
+                local porClave={}
+                for _,c in ipairs(carpetaAmuletos:GetChildren()) do
+                    local nombreAmuleto = c:GetAttribute("CharmName") or c:GetAttribute("Name") or ""
+                    if nombreAmuleto=="" then continue end
+                    if c:GetAttribute("Locked") then continue end
+                    local valEstrella = c:GetAttribute("Stars")
+                    if type(valEstrella)~="number" then valEstrella=0 end
+                    if valEstrella >= 3 then continue end
+                    local k = nombreAmuleto.."_"..tostring(valEstrella)
+                    porClave[k] = porClave[k] or {}
+                    table.insert(porClave[k], c.Name)
+                end
+                for k, ids in pairs(porClave) do
+                    if #ids >= 3 then
+                        local aFusionar={ids[1], ids[2], ids[3]}
+                        if Remotes:FindFirstChild("FuseCharms") then safeFire(Remotes.FuseCharms, aFusionar) end
+                        return
+                    end
+                end
+            end)
+        else stopLoop("AutoFusionarAmuletos") end
+    end)
+end
+
+do
+    local G=InvConsumibles:AddLeftGroupbox("Pociones")
+    local Pociones={"Velocidad 10m","Velocidad 30m","Velocidad 1h","Victorias 10m","Victorias 30m","Victorias 1h"}
+    local PocionesOriginales={"Speed 10m","Speed 30m","Speed 1h","Wins 10m","Wins 30m","Wins 1h"}
+    for idx,pocion in ipairs(Pociones) do
+        local id="AutoUsarPocion_"..pocion:gsub(" ",""):gsub("10m","10"):gsub("30m","30"):gsub("1h","60")
+        G:AddToggle(id, {Text="Auto Usar Pocion: "..pocion, Default=false})
+        createIntervalSlider(G, id.."_Intervalo", pocion.." Intervalo", 2)
+    end
+    task.spawn(function()
+        task.wait(0.5)
+        for idx,pocion in ipairs(Pociones) do
+            local id="AutoUsarPocion_"..pocion:gsub(" ",""):gsub("10m","10"):gsub("30m","30"):gsub("1h","60")
+            local pocionOriginal = PocionesOriginales[idx]
+            if Toggles[id] then
+                Toggles[id]:OnChanged(function()
+                    if Toggles[id].Value then
+                        runLoop(id,id,id.."_Intervalo",function()
+                            if Remotes:FindFirstChild("UsePotion") then safeFire(Remotes.UsePotion, pocionOriginal) end
+                        end)
+                    else stopLoop(id) end
+                end)
+            end
+        end
+    end)
+
+    do
+        local G2=InvConsumibles:AddRightGroupbox("Informacion")
+        G2:AddLabel("Colas Limitadas son GamePasses de Robux (Toxico, Sombra etc) - no cultivables.", true)
+    end
+end
+
+do
+    local G=RenAuto:AddLeftGroupbox("Auto Renacimiento")
+    G:AddToggle("AutoRenacimiento", {Text="Auto Renacimiento", Default=false, Tooltip="Solo dispara el remoto de Renacimiento"})
+    createIntervalSlider(G, "AutoRenacimiento_Intervalo", "Intervalo", 1)
+
+    Toggles.AutoRenacimiento:OnChanged(function()
+        if Toggles.AutoRenacimiento.Value then
+            runLoop("AutoRenacimiento","AutoRenacimiento","AutoRenacimiento_Intervalo",function()
+                if Remotes:FindFirstChild("Rebirth") then safeFire(Remotes.Rebirth) end
+            end)
+        else stopLoop("AutoRenacimiento") end
+    end)
+
+    local G2=RenInfo:AddLeftGroupbox("Estado de Renacimiento")
+    local txt=string.format("Renacimientos: %d | Nivel %d", Data.Rebirths.Value, Data.Level.Value)
+    G2:AddLabel(txt, true, "EtiquetaInfoRenacimiento")
+    Data.Level.Changed:Connect(function()
+        if Options.EtiquetaInfoRenacimiento then Options.EtiquetaInfoRenacimiento:SetText(string.format("Renacimientos: %d | Nivel %d", Data.Rebirths.Value, Data.Level.Value)) end
+    end)
+    Data.Rebirths.Changed:Connect(function()
+        if Options.EtiquetaInfoRenacimiento then Options.EtiquetaInfoRenacimiento:SetText(string.format("Renacimientos: %d | Nivel %d", Data.Rebirths.Value, Data.Level.Value)) end
+    end)
+    G2:AddButton({Text="Renacer Ahora", Func=function() if Remotes:FindFirstChild("Rebirth") then safeFire(Remotes.Rebirth) end end})
+end
+
+do
+    local G=Tabs.Ajustes:AddLeftGroupbox("Sistema")
+    G:AddToggle("AntiAFK", {Text="Anti-AFK", Default=true})
+    Toggles.AntiAFK:OnChanged(function() setAntiAFK(Toggles.AntiAFK.Value) end)
+    setAntiAFK(true)
+
+    do
+        local COREGUI=game:GetService("CoreGui")
+        local redPausada=nil
+        local function habilitarAntiPausa()
+            pcall(function() if redPausada then redPausada:Disconnect() end end)
+            redPausada = COREGUI.RobloxGui.ChildAdded:Connect(function(obj)
+                if obj.Name == "CoreScripts/NetworkPause" then
+                    pcall(function() obj:Destroy() end)
+                end
+            end)
+            pcall(function()
+                local existente=COREGUI.RobloxGui:FindFirstChild("CoreScripts/NetworkPause") or COREGUI.RobloxGui:FindFirstChild("NetworkPause")
+                if existente then existente:Destroy() end
+                local cs=COREGUI.RobloxGui:FindFirstChild("CoreScripts")
+                if cs and cs:FindFirstChild("NetworkPause") then cs.NetworkPause:Destroy() end
+            end)
+        end
+        habilitarAntiPausa()
+        task.spawn(function()
+            while true do
+                task.wait(5)
+                pcall(function()
+                    local np=COREGUI.RobloxGui:FindFirstChild("CoreScripts/NetworkPause")
+                    if np then np:Destroy() end
+                end)
+            end
+        end)
+        pcall(function()
+            if _G.addcmd or getgenv().addcmd then
+                local addcmd = _G.addcmd or getgenv().addcmd
+                addcmd("antipausajuego", {}, function(args, speaker)
+                    pcall(function() if redPausada then redPausada:Disconnect() end end)
+                    redPausada = COREGUI.RobloxGui.ChildAdded:Connect(function(obj)
+                        if obj.Name == "CoreScripts/NetworkPause" then obj:Destroy() end
+                    end)
+                    pcall(function() COREGUI.RobloxGui["CoreScripts/NetworkPause"]:Destroy() end)
+                end)
+            end
+        end)
+    end
+
+    G:AddLabel("Tecla de Menu (RightShift)"):AddKeyPicker("TeclaMenu", {Default="RightShift", NoUI=false, Text="Tecla de Menu"})
+    Library.ToggleKeybind=Options.TeclaMenu
+    G:AddDivider()
+    G:AddButton({Text="Descargar", Func=function() Library:Unload() end})
+end
+
+do
+    local G=Tabs.Creditos:AddLeftGroupbox("Creditos")
+    G:AddLabel("Chituk (Chituk_09 youtube)", true)
+    G:AddLabel("Pichigdasos-Dev de este script y El De MM2", true)
+    G:AddDivider()
+    G:AddLabel("Gracias por usar Chituk Hub!", true)
+end
+
+ThemeManager:SetLibrary(Library)
+SaveManager:SetLibrary(Library)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({"TeclaMenu"})
+ThemeManager:SetFolder("Chituk Hub")
+SaveManager:SetFolder("Chituk Hub/"..GameName)
+SaveManager:SetSubFolder(tostring(game.PlaceId))
+SaveManager:BuildConfigSection(Tabs.Ajustes)
+ThemeManager:ApplyToTab(Tabs.Ajustes)
+SaveManager:LoadAutoloadConfig()
+Library:Notify({Title="Chituk Hub", Description=GameName.." cargado correctamente.", Time=5})
+Library:OnUnload(function()
+    for id,_ in pairs(Loops) do stopLoop(id) end
+    if AntiAFKConn then AntiAFKConn:Disconnect() end
+    print("Chituk Hub descargado")
+end)
